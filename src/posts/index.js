@@ -1,12 +1,12 @@
 /* eslint-disable import/no-webpack-loader-syntax */
 import { lazy } from 'react';
-import { frontMatter as testFrontMatter } from '!babel-loader!mdx-loader!posts/test.mdx';
-const TestPost = lazy(() => import('!babel-loader!mdx-loader!posts/test.mdx'));
+import { frontMatter as shadowziqFrontMatter } from '!babel-loader!mdx-loader!posts/gds-iq-guide.mdx';
+const ShadowzIQPost = lazy(() => import('!babel-loader!mdx-loader!posts/gds-iq-guide.mdx'));
 
 const posts = [
   {
-    content: TestPost,
-    ...testFrontMatter,
+    content: ShadowzIQPost,
+    ...shadowziqFrontMatter,
   }
 ];
 

@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { Transition } from 'react-transition-group';
-import styled, { keyframes } from 'styled-components/macro';
+import styled, { keyframes, css } from 'styled-components/macro';
 import Footer from 'components/Footer';
 import Divider from 'components/Divider';
 import Svg from 'components/Svg';
@@ -87,6 +87,18 @@ function PostWrapper({
               </PostTitleWordWrapper>
             ))}
           </PostTitle>
+          <Transition
+            appear
+            in={!prerender}
+            onEnter={node => node && node.offsetHeight}
+          >
+            {status => (
+              <PostAuthor aria-label={description} status={status}>
+                {description}
+              </PostAuthor>
+            )}
+          </Transition>
+
           <PostBannerArrow
             href="#postContent"
             aria-label="Scroll to post content"
@@ -115,14 +127,47 @@ function PostWrapper({
 }
 
 function imageFactory({ src, ...props }) {
-  if (!src.startsWith('http')) {
-    return (
-      <Image {...props} src={require(`posts/assets/${src}`)} />
-    );
+  return <Image {...props} src={`https://gatherer.wizards.com/Handlers/Image.ashx?name=${encodeURI(src.replace(/\./g,' '))}&type=card`} />;
+};
+
+const PostAuthor = styled.h1`
+  text-transform: uppercase;
+  font-size: 24px;
+  letter-spacing: 0.3em;
+  color: ${props => rgba(props.theme.colorText, 0.8)};
+  margin-bottom: 40px;
+  margin-top: 40px;
+  font-weight: 500;
+  line-height: 1;
+  opacity: 0;
+
+  ${props => props.status === 'entered' && css`
+    animation: ${css`${AnimFade} 0.6s ease 0.2s forwards`};
+    animation-delay: 1.5s;
+  `}
+
+  @media (min-width: ${media.desktop}) {
+    font-size: 28px;
+    margin-bottom: 40px;
   }
 
-  return <Image {...props} src={src} />;
-}
+  @media (max-width: ${media.tablet}) {
+    font-size: 18px;
+    margin-bottom: 40px;
+  }
+
+  @media (max-width: ${media.mobile}) {
+    margin-bottom: 20px;
+    letter-spacing: 0.2em;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  @media ${media.mobileLS} {
+    margin-bottom: 20px;
+    margin-top: 30px;
+  }
+`;
 
 const PostArticle = styled.article`
   position: relative;
@@ -422,7 +467,7 @@ const PostContent = styled.div`
 
 const HeadingTwo = styled.h2`
   color: ${props => props.theme.colorTitle};
-  margin: 0;
+  margin: 34px 0 0 0;
   font-size: 42px;
   grid-column: 3;
   font-weight: 500;
@@ -441,7 +486,7 @@ const HeadingTwo = styled.h2`
   }
 `;
 
-const Paragrapgh = styled.p`
+const Paragraph = styled.p`
   color: ${props => rgba(props.theme.colorText, 0.8)};
   margin: 0;
   font-size: 24px;
@@ -491,16 +536,16 @@ const Paragrapgh = styled.p`
 `;
 
 const Image = styled.img`
-  display: block;
-  margin: 80px 0;
-  max-width: 100%;
+  display: inline-block;
+  margin: 20px 0;
+  max-width: 24.3%;
   width: 100%;
   height: auto;
   grid-column: 2 / span 3;
 
   @media (max-width: ${media.tablet}) {
     grid-column: 1;
-    margin: 60px 0;
+    margin: 15px 0;
   }
 `;
 
@@ -514,7 +559,7 @@ const InlineCode = styled.code`
 const components = {
   wrapper: PostWrapper,
   h2: HeadingTwo,
-  p: Paragrapgh,
+  p: Paragraph,
   img: imageFactory,
   a: (props) => <Anchor target="_blank" {...props} />,
   pre: CodeBlock,

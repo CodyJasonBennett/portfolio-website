@@ -49,7 +49,7 @@ function PostList() {
     <PostListWrapper>
       <Helmet>
         <title>{`Articles | Cody Bennett`}</title>
-        <meta name="description" content="A collection of technical design and development articles." />
+        {/*<meta name="description" content="A collection of technical design and development articles." />*/}
       </Helmet>
       <PostListContent>
         <PostTitleWrapper>
