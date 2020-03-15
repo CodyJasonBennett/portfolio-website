@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react';
 import styled, { useTheme } from 'styled-components/macro';
 import { Helmet } from 'react-helmet-async';
-import { LinkButton } from 'components/Button';
 import ProgressiveImage from 'components/ProgressiveImage';
 import Footer from 'components/Footer';
 import {
@@ -10,7 +9,6 @@ import {
   ProjectSectionColumns, SidebarImageText, SidebarImage, ProjectTextRow
 } from 'components/Project';
 import { useScrollRestore } from 'hooks';
-import { rgba } from 'utils/style';
 import prerender from 'utils/prerender';
 import dttBackground from 'assets/dtt-background.png';
 import dttBackgroundLarge from 'assets/dtt-background-large.png';
@@ -19,17 +17,29 @@ import dtt from 'assets/dtt.png';
 import dttLarge from 'assets/dtt-large.png';
 import dttPlaceholder from 'assets/dtt-placeholder.png';
 import dttBranding from 'assets/dtt-branding.png';
+import dttBrandingLarge from 'assets/dtt-branding-large.png';
 import dttBrandingPlaceholder from 'assets/dtt-branding-placeholder.png';
 import dttTool from 'assets/dtt-tool.png';
+import dttToolLarge from 'assets/dtt-tool-large.png';
 import dttToolPlaceholder from 'assets/dtt-tool-placeholder.png';
+import dttAPI from 'assets/dtt-api.png';
+import dttAPILarge from 'assets/dtt-api-large.png';
+import dttAPIPlaceholder from 'assets/dtt-api-placeholder.png';
 import dttPipeline from 'assets/dtt-pipeline.png';
 import dttPipelineLarge from 'assets/dtt-pipeline-large.png';
 import dttPipelinePlaceholder from 'assets/dtt-pipeline-placeholder.png';
-import dttAPI from 'assets/dtt-api.png';
-import dttAPIPlaceholder from 'assets/dtt-api-placeholder.png';
-import dttLogo from 'assets/dtt-logo.png';
-import dttLogoLarge from 'assets/dtt-logo-large.png';
-import dttLogoPlaceholder from 'assets/dtt-logo-placeholder.png';
+import dttLandingFigma from 'assets/dtt-landing-figma.png';
+import dttLandingFigmaLarge from 'assets/dtt-landing-figma-large.png';
+import dttLandingFigmaPlaceholder from 'assets/dtt-landing-figma-placeholder.png';
+import dttLanding from 'assets/dtt-landing.png';
+import dttLandingLarge from 'assets/dtt-landing-large.png';
+import dttLandingPlaceholder from 'assets/dtt-landing-placeholder.png';
+import dttAppFigma from 'assets/dtt-app-figma.png';
+import dttAppFigmaLarge from 'assets/dtt-app-figma-large.png';
+import dttAppFigmaPlaceholder from 'assets/dtt-app-figma-placeholder.png';
+import dttApp from 'assets/dtt-app.png';
+import dttAppLarge from 'assets/dtt-app-large.png';
+import dttAppPlaceholder from 'assets/dtt-app-placeholder.png';
 
 const title = 'A Tool for Everything';
 const description = 'I lead the design and development of DevTech Tools. We focused on creating the best platform for developers to build better software.';
@@ -83,7 +93,7 @@ function ProjectDTT() {
               </ProjectSectionText>
             </SidebarImageText>
             <SidebarImage
-              srcSet={dttBranding}
+              srcSet={`${dttBranding} 400w, ${dttBrandingLarge} 898w`}
               placeholder={dttBrandingPlaceholder}
               sizes={`(max-width: ${theme.mobile}px) 100vw, (max-width: ${theme.tablet}px) 100vw, 50vw`}
               alt="The DevTech Tools color palette and logo, featuring pipelines as electronic traces."
@@ -106,8 +116,9 @@ function ProjectDTT() {
         <ProjectSection>
           <ProjectSectionGrid>
             <ProgressiveImage
-              srcSet={dttTool}
+              srcSet={`${dttTool} 400w, ${dttToolLarge} 898w`}
               placeholder={dttToolPlaceholder}
+              sizes={`(max-width: ${theme.mobile}px) 100vw, (max-width: ${theme.tablet}px) 100vw, 50vw`}
               alt="The tool wrapper of the JSON to CSV data converter."
             />
             <ProjectSectionGridText>
@@ -133,7 +144,7 @@ function ProjectDTT() {
               </ProjectSectionText>
             </SidebarImageText>
             <SidebarImage
-              srcSet={dttAPI}
+              srcSet={`${dttAPI} 400w, ${dttAPILarge} 898w`}
               placeholder={dttAPIPlaceholder}
               sizes={`(max-width: ${theme.mobile}px) 100vw, (max-width: ${theme.tablet}px) 100vw, 50vw`}
               alt="A snippet from the DevTech Tools API, converting data from JSON to CSV."
@@ -159,41 +170,46 @@ function ProjectDTT() {
             />
           </ProjectSectionContent>
         </ProjectSection>
-        <ProjectBackgroundSection>
-          <ProjectSectionBackgroundImage
-            srcSet={`${dttBackground} 1280w, ${dttBackgroundLarge} 1920w`}
-            placeholder={dttBackgroundPlaceholder}
-            alt="The brand image of DevTech Tools, featuring a colorful field of shapes and tools."
-            sizes={`100vw`}
-          />
-          <ProjectSection as="div">
-            <ProjectSectionContent>
-              <ProjectTextRow center centerMobile noMargin>
-                <ProgressiveImage
-                  srcSet={`${dttLogo} 180w, ${dttLogoLarge} 320w`}
-                  placeholder={dttLogoPlaceholder}
-                  alt="The DevTech Tools logo."
-                  sizes={`(max-width: ${theme.mobile}px) 100vw, (max-width: ${theme.tablet}px) 100vw, 220px`}
-                  style={{ maxWidth: 220, width: '100%', marginBottom: 30 }}
-                />
-                <ProjectSectionHeading>Wrapping Up</ProjectSectionHeading>
-                <ProjectSectionText>
-                  We released DevTech Tools to the world, giving developers the power to speed-up and automate their workflows.
-                </ProjectSectionText>
-                <LinkButton
-                  secondary
-                  iconHoverShift
-                  style={{ paddingLeft: '3px' }}
-                  icon="chevronRight"
-                  target="_blank"
-                  href="https://devtechtools.com"
-                >
-                  Visit DevTech Tools
-                </LinkButton>
-              </ProjectTextRow>
-            </ProjectSectionContent>
-          </ProjectSection>
-        </ProjectBackgroundSection>
+        <ProjectSection light>
+          <ProjectSectionContent>
+            <ProjectTextRow>
+              <ProjectSectionHeading>Going Online</ProjectSectionHeading>
+              <ProjectSectionText>
+                We needed a place for DevTech Tools and its users to call home.
+              </ProjectSectionText>
+              <ProjectSectionText>
+                I designed and developed the DevTech Tools website, featuring a blog with weekly tutorials, comprehensive and interactive documentation for the DevTech Tools API, and a web application to put everything together.
+              </ProjectSectionText>
+            </ProjectTextRow>
+            <ProgressiveImage
+              srcSet={`${dttLandingFigma} 800w, ${dttLandingFigmaLarge} 1440w`}
+              placeholder={dttLandingFigmaPlaceholder}
+              alt="A screenshot in Figma, featuring the DevTech Tools landing screens' designs."
+              sizes={`(max-width: ${theme.mobile}px) 500px, (max-width: ${theme.tablet}px) 800px, 1000px`}
+            />
+            <ProgressiveImage
+              srcSet={`${dttLanding} 800w, ${dttLandingLarge} 1440w`}
+              placeholder={dttLandingPlaceholder}
+              alt="A screenshot of the landing page in production."
+              sizes={`(max-width: ${theme.mobile}px) 500px, (max-width: ${theme.tablet}px) 800px, 1000px`}
+              style={{ marginTop: 80 }}
+            />
+            <ProgressiveImage
+              srcSet={`${dttAppFigma} 800w, ${dttAppFigmaLarge} 1440w`}
+              placeholder={dttAppFigmaPlaceholder}
+              alt="A screenshot in Figma, featuring the DevTech Tools app screens' designs."
+              sizes={`(max-width: ${theme.mobile}px) 500px, (max-width: ${theme.tablet}px) 800px, 1000px`}
+              style={{ marginTop: 80 }}
+            />
+            <ProgressiveImage
+              srcSet={`${dttApp} 800w, ${dttAppLarge} 1440w`}
+              placeholder={dttAppPlaceholder}
+              alt="A screenshot of the app settings page in production."
+              sizes={`(max-width: ${theme.mobile}px) 500px, (max-width: ${theme.tablet}px) 800px, 1000px`}
+              style={{ marginTop: 80 }}
+            />
+          </ProjectSectionContent>
+        </ProjectSection>
       </ProjectContainer>
       <Footer />
     </Fragment>
@@ -212,59 +228,5 @@ const ProjectSectionGrid = styled(ProjectSectionContent)`
 `;
 
 const ProjectSectionGridText = styled.div``;
-
-const ProjectBackgroundSection = styled.section`
-  display: grid;
-  grid-template-columns: 100%;
-
-  ${ProjectSection} {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
-  ${ProjectSectionContent} {
-    padding: 120px 0 140px;
-
-    @media (max-width: ${props => props.theme.laptop}px) {
-      padding: 40px 0 100px;
-    }
-
-    @media (max-width: ${props => props.theme.tablet}px) {
-      padding: 30px 0 60px;
-    }
-
-    @media (max-width: ${props => props.theme.mobile}px) {
-      padding: 20px 0 40px;
-    }
-  }
-`;
-
-const ProjectSectionBackgroundImage = styled(ProgressiveImage)`
-  grid-column: 1;
-  grid-row: 1;
-
-  img {
-    object-fit: cover;
-    justify-self: stretch;
-    align-self: stretch;
-  }
-
-  div::after {
-    content: '';
-    grid-column: 1;
-    grid-row: 1;
-    z-index: 1;
-    position: relative;
-    background:
-      linear-gradient(
-        ${props => rgba(props.theme.colorBackground, 1)} 0%,
-        ${props => rgba(props.theme.colorBackground, 0.9)} 20%,
-        ${props => rgba(props.theme.colorBackground, 0)} 100%),
-      linear-gradient(
-        ${props => rgba(props.theme.colorBackground, 0)} 0%,
-        ${props => rgba(props.theme.colorBackground, 0.9)} 80%,
-        ${props => rgba(props.theme.colorBackground, 1)} 100%);
-  }
-`;
 
 export default ProjectDTT;
