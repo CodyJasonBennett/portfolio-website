@@ -2,67 +2,73 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://codyb.co/</loc>
-    <lastmod>2020-09-29</lastmod>
+    <lastmod>2020-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://codyb.co/contact</loc>
-    <lastmod>2020-09-29</lastmod>
+    <lastmod>2020-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://codyb.co/articles</loc>
-    <lastmod>2020-09-29</lastmod>
+    <lastmod>2020-10-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://codyb.co/articles/accessible-motion-design-for-the-web</loc>
-    <lastmod>2020-09-29</lastmod>
+    <lastmod>2020-10-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://codyb.co/articles/observer-api-for-modern-javascript</loc>
+    <lastmod>2020-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://codyb.co/projects/modern</loc>
-    <lastmod>2020-09-29</lastmod>
+    <lastmod>2020-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://codyb.co/projects/dtt</loc>
-    <lastmod>2020-09-29</lastmod>
+    <lastmod>2020-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://storybook.codyb.co</loc>
-    <lastmod>2020-09-29</lastmod>
+    <lastmod>2020-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://supernote.codyb.co</loc>
-    <lastmod>2020-09-29</lastmod>
+    <lastmod>2020-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://github.codyb.co</loc>
-    <lastmod>2020-09-29</lastmod>
+    <lastmod>2020-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://linkedin.codyb.co</loc>
-    <lastmod>2020-09-29</lastmod>
+    <lastmod>2020-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://codepen.codyb.co</loc>
-    <lastmod>2020-09-29</lastmod>
+    <lastmod>2020-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>

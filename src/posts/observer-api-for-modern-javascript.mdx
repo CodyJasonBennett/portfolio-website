@@ -1,0 +1,139 @@
+---
+slug: observer-api-for-modern-javascript
+title: The Observer API for Modern JavaScript
+description: Observer APIs are handy in detecting change and can be used to create responsive applications.
+banner: observer-api-for-modern-javascript.jpg
+bannerPlaceholder: observer-api-for-modern-javascript-placeholder.jpg
+bannerAlt: JavaScript observer illustration by indepth.dev.
+tags: ['development', 'javascript', 'optimization']
+date: 2020-09-27
+readTime: '00:02:00:00'
+---
+
+Observer APIs are handy in detecting change and can be used to create responsive applications.
+
+There are four different types of observers that observe different things -- from the DOM to browser performance.
+
+## [MutationObserver](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)
+
+MutationObserver observes the DOM tree, listening for the changes made to the DOM.
+
+```js
+// Select the node that will be observed for mutations
+const targetNode = document.getElementById('element');
+
+// Options for the observer (which mutations to observe)
+const config = {
+  attributes: true,
+  childList: true,
+  subtree: true,
+};
+
+// Create an observer instance linked to a callback to execute when mutations are observed
+const observer = new MutationObserver((mutations, observer) => {
+  mutations.forEach(mutation => {
+    if (mutation.type === 'childList') {
+      console.log('A child node has been added or removed.');
+    } else if (mutation.type === 'attributes') {
+      console.log(`The ${mutation.attributeName} attribute was modified.`);
+    }
+  });
+});
+
+// Start observing the target node for configured mutations
+observer.observe(targetNode, config);
+
+// Later, you can stop observing
+observer.disconnect();
+```
+
+We will be notified when an element’s attributes, text, or contents changed and also monitors the child nodes whether it has been added or removed.
+
+This is particularly useful for resizing elements in the DOM as well as resetting DOM values.
+
+## [IntersectionObserver](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver)
+
+IntersectionObserver observes a DOM element’s visibility, listening for changes in its positions.
+
+```js
+// Select the node that will be observed for mutations
+const targetNode = document.getElementById('element');
+
+// Options for the observer
+const config = {
+  rootMargin: '-100% 0px 0px 0px',
+};
+
+// Create an observer instance linked to a callback to execute when entries are observed
+const intersectionObserver = new IntersectionObserver((entries, observer) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      console.log('Observing.');
+
+      // Later, you can stop observing
+      observer.unobserve(entry.target);
+    }
+  });
+});
+
+// Start observing
+intersectionObserver.observe(targetNode, config);
+```
+
+This is very useful in lazy loading and animating content based on the target element’s visibility and positions.
+
+## [ResizeObserver](https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver)
+
+ResizeObserver observes elements' content or border-box, listening for changes in the element and its children.
+
+```js
+// Select the node that will be observed for mutations
+const targetNode = document.getElementById('element');
+
+const resizeObserver = new ResizeObserver((entries, observer) => {
+  entries.forEach(entry => {
+    console.log(`Element size: ${cr.width}px x ${cr.height}px`);
+    console.log(`Element padding: ${cr.top}px ; ${cr.left}px`);
+
+    // Later, you can stop observing
+    observer.unobserve(entry.target);
+  });
+});
+
+// Start observing
+resizeObserver.observe(targetNode);
+```
+
+This observer is relevant when creating dynamic content that wraps based on input or triggers.
+
+## [PerformanceObserver](https://developer.mozilla.org/en-US/docs/Web/API/PerformanceObserver)
+
+PerformanceObserver observes performance measurement events, listening for new performance entries.
+
+```js
+// Options for the observer
+const config = {
+  entryTypes: ['resource', 'mark', 'measure']
+};
+
+const observer = new PerformanceObserver(list => {
+  list.getEntries().forEach(entry => {
+    // Display each reported measurement on console
+    console.log(
+      `Name: ${entry.name}`,
+      `Type: ${entry.entryType}`,
+      `Start: ${entry.startTime}`,
+      `Duration: ${entry.duration}`,
+    );
+  });
+});
+
+observer.observe(config);
+performance.mark('registered-observer');
+```
+
+This is useful for receiving performance notifications to be ran during idle time without competing with critical rendering work.
+
+## Conclusion
+
+The observer APIs unlock the web's hidden superpowers to create truly responsive experiences, from lazy-loading critical content to non-intrusive performance monitoring.
