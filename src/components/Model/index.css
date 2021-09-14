@@ -8,6 +8,6 @@
   }
 }
 
-.model--loaded {
+.model--visible {
   animation: fade-in 1s ease forwards var(--delay);
 }

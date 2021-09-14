@@ -1,4 +1,4 @@
-import { useRef, useEffect, Suspense, useState } from 'react';
+import { useRef, useEffect, Suspense } from 'react';
 import classNames from 'classnames';
 import { spring, value } from 'popmotion';
 import { invalidate, Canvas } from '@react-three/fiber';
@@ -18,18 +18,11 @@ const Model = ({
   alt,
   ...rest
 }) => {
-  const [loaded, setLoaded] = useState(false);
   const canvas = useRef();
   const modelGroup = useRef();
   const isInViewport = useInViewport(canvas, false, { threshold: 0.4 });
   const reduceMotion = usePrefersReducedMotion();
-
-  const Loader = () => {
-    useEffect(() => {
-      return () => setLoaded(true);
-    }, []);
-    return null;
-  };
+  const visible = show || isInViewport;
 
   // Handle mouse move animation
   useEffect(() => {
@@ -77,7 +70,7 @@ const Model = ({
 
   return (
     <Canvas
-      className={classNames('model', { 'model--loaded': loaded }, className)}
+      className={classNames('model', { 'model--visible': visible }, className)}
       style={{ '--delay': numToMs(showDelay), ...style }}
       ref={canvas}
       role="img"
@@ -99,8 +92,8 @@ const Model = ({
       <directionalLight intensity={1.1} position={[0.5, 0, 0.866]} />
       <directionalLight intensity={0.8} position={[0, 0, 2]} />
       <Shadows />
-      {(isInViewport || loaded) && (
-        <Suspense fallback={<Loader />}>
+      {visible && (
+        <Suspense fallback={null}>
           <group ref={modelGroup}>
             {models.map((model, index) => (
               <Device
