@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import classNames from 'classnames';
 import {
   WebGLRenderer,
   LinearFilter,
@@ -12,15 +13,14 @@ import {
   sRGBEncoding,
 } from 'three';
 import { spring, value, listen, pointer } from 'popmotion';
-import classNames from 'classnames';
 import { usePrefersReducedMotion, useInViewport } from 'hooks';
 import prerender from 'utils/prerender';
 import { blurOnMouseUp } from 'utils/focus';
-import { ReactComponent as ArrowLeft } from 'assets/arrow-left.svg';
-import { ReactComponent as ArrowRight } from 'assets/arrow-right.svg';
-import { vertex, fragment } from './carouselShader';
 import { cleanScene, cleanRenderer } from 'utils/three';
 import { getImageFromSrcSet } from 'utils/image';
+import { ReactComponent as ArrowLeft } from 'assets/arrow-left.svg';
+import { ReactComponent as ArrowRight } from 'assets/arrow-right.svg';
+import { vertexShader, fragmentShader } from './carouselShader';
 import './index.css';
 
 function determineIndex(imageIndex, index, images, direction) {
@@ -125,8 +125,8 @@ const Carousel = ({ width, height, images, placeholder, ...rest }) => {
           currentImage: { type: 't', value: textures[0] },
           nextImage: { type: 't', value: textures[1] },
         },
-        vertexShader: vertex,
-        fragmentShader: fragment,
+        vertexShader,
+        fragmentShader,
         transparent: false,
         opacity: 1,
       });

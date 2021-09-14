@@ -190,10 +190,11 @@
 }
 
 .profile__image--entered {
-  & .portrait__canvas {
+  & canvas {
     animation: fade-in var(--durationM) ease var(--delay) forwards;
     animation-iteration-count: 1;
     animation-delay: 1s;
+    background: rgb(var(--rgbBackgroundLight));
   }
 
   @media (--mediaUseMotion) {

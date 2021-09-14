@@ -1,102 +1,28 @@
-import { useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
 import classNames from 'classnames';
-import {
-  WebGLRenderer,
-  ACESFilmicToneMapping,
-  sRGBEncoding,
-  PerspectiveCamera,
-  Scene,
-  Fog,
-  Color,
-  AmbientLight,
-  RectAreaLight,
-} from 'three';
-import { spring, value } from 'popmotion';
+import { RectAreaLight } from 'three';
+import { useThree, Canvas } from '@react-three/fiber';
+import { useGLTF } from '@react-three/drei';
 import { RectAreaLightUniformsLib } from 'three/examples/jsm/lights/RectAreaLightUniformsLib.js';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { usePrefersReducedMotion, useInViewport } from 'hooks';
-import { cleanScene, cleanRenderer, removeLights } from 'utils/three';
-import { rgbToThreeColor } from 'utils/style';
+import { spring, value } from 'popmotion';
 import { useTheme } from 'components/ThemeProvider';
+import { useInViewport, usePrefersReducedMotion } from 'hooks';
 import portraitModelPath from 'assets/portrait.glb';
 import './index.css';
 
 RectAreaLightUniformsLib.init();
 
-const Portrait = ({ className, delay, ...rest }) => {
-  const { rgbBackgroundLight, themeId } = useTheme();
-  const container = useRef();
-  const canvas = useRef();
-  const renderer = useRef();
-  const camera = useRef();
-  const scene = useRef();
-  const lights = useRef();
-  const prefersReducedMotion = usePrefersReducedMotion();
-  const isInViewport = useInViewport(container);
+const RectLight = ({ args, ...rest }) => {
+  const [light] = useState(() => new RectAreaLight(...args));
 
-  // Init scene and models
-  useEffect(() => {
-    const { clientWidth, clientHeight } = container.current;
+  useEffect(() => void light.lookAt(0, 0, 0), [light]);
 
-    renderer.current = new WebGLRenderer({
-      antialias: false,
-      canvas: canvas.current,
-      powerPreference: 'high-performance',
-    });
-    renderer.current.setSize(clientWidth, clientHeight);
-    renderer.current.setPixelRatio(2);
-    renderer.current.toneMapping = ACESFilmicToneMapping;
-    renderer.current.outputEncoding = sRGBEncoding;
+  return <primitive object={light} {...rest} />;
+};
 
-    camera.current = new PerspectiveCamera(45, clientWidth / clientHeight, 0.5, 2.25);
-    camera.current.position.z = 0.8;
-
-    scene.current = new Scene();
-    scene.current.fog = new Fog(0xffffff, 0, 2.25);
-
-    const dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath('/draco');
-
-    const modelLoader = new GLTFLoader();
-    modelLoader.setDRACOLoader(dracoLoader);
-
-    modelLoader.load(portraitModelPath, model => {
-      model.scene.position.y = -1.6;
-      scene.current.add(model.scene);
-
-      renderer.current.render(scene.current, camera.current);
-    });
-
-    return () => {
-      cleanScene(scene.current);
-      cleanRenderer(renderer.current);
-    };
-  }, []);
-
-  // Lights
-  useEffect(() => {
-    const ambientLight = new AmbientLight(0xffffff, themeId === 'dark' ? 0.1 : 0.2);
-
-    const rectLight1 = new RectAreaLight(0xffffff, 6, 10, 10);
-    rectLight1.position.set(4.5, -1.3, -3);
-    rectLight1.lookAt(0, 0, 0);
-
-    const rectLight2 = new RectAreaLight(0xffffff, 6, 15, 15);
-    rectLight2.position.set(-10, 0.7, -10);
-    rectLight2.lookAt(0, 0, 0);
-
-    lights.current = [ambientLight, rectLight1, rectLight2];
-    lights.current.forEach(light => scene.current.add(light));
-
-    scene.current.background = new Color(...rgbToThreeColor(rgbBackgroundLight));
-    scene.current.fog.color = new Color(...rgbToThreeColor(rgbBackgroundLight));
-    scene.current.fog.far = 10;
-
-    return () => {
-      removeLights(lights.current);
-    };
-  }, [themeId, rgbBackgroundLight]);
+const Model = ({ isInViewport, reduceMotion }) => {
+  const { scene, invalidate } = useThree();
+  const gltf = useGLTF(portraitModelPath);
 
   // Handle mouse move animation
   useEffect(() => {
@@ -104,7 +30,7 @@ const Portrait = ({ className, delay, ...rest }) => {
     let rotationSpringValue;
 
     const onMouseMove = event => {
-      const { rotation } = scene.current;
+      const { rotation } = scene;
       const { innerWidth, innerHeight } = window;
 
       const position = {
@@ -115,7 +41,7 @@ const Portrait = ({ className, delay, ...rest }) => {
       if (!rotationSpringValue) {
         rotationSpringValue = value({ x: rotation.x, y: rotation.y }, ({ x, y }) => {
           rotation.set(x, y, rotation.z);
-          renderer.current.render(scene.current, camera.current);
+          invalidate();
         });
       }
 
@@ -130,7 +56,7 @@ const Portrait = ({ className, delay, ...rest }) => {
       }).start(rotationSpringValue);
     };
 
-    if (isInViewport && !prefersReducedMotion) {
+    if (isInViewport && !reduceMotion) {
       window.addEventListener('mousemove', onMouseMove);
     }
 
@@ -139,40 +65,48 @@ const Portrait = ({ className, delay, ...rest }) => {
 
       rotationSpring?.stop();
     };
-  }, [isInViewport, prefersReducedMotion]);
+  }, [scene, invalidate, isInViewport, reduceMotion]);
 
-  // Handles window resize
-  useEffect(() => {
-    const handleResize = () => {
-      const { clientWidth, clientHeight } = container.current;
+  return <primitive object={gltf.scene} position={[0, -1.6, 0]} />;
+};
 
-      renderer.current.setSize(clientWidth, clientHeight);
-      camera.current.aspect = clientWidth / clientHeight;
-      camera.current.updateProjectionMatrix();
+const Portrait = ({ className, delay, ...rest }) => {
+  const { themeId } = useTheme();
+  const [loaded, setLoaded] = useState();
+  const canvas = useRef();
+  const isInViewport = useInViewport(canvas);
+  const reduceMotion = usePrefersReducedMotion();
 
-      // Render a single frame on resize
-      renderer.current.render(scene.current, camera.current);
-    };
+  const Loader = () => {
+    useEffect(() => {
+      return () => setLoaded(true);
+    }, []);
+    return null;
+  };
 
-    window.addEventListener('resize', handleResize);
-    handleResize();
-
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, []);
+  useEffect(() => void (canvas.current.parentNode.style = `--delay: ${delay}`), [delay]);
 
   return (
-    <div
-      className={classNames('portrait', `portrait--${themeId}`, className)}
-      ref={container}
-      style={{ '--delay': delay }}
+    <Canvas
+      className={classNames('portrait', className)}
+      ref={canvas}
       role="img"
       aria-label="A 3D portrait of myself."
+      frameloop="demand"
+      dpr={[1, 2]}
+      gl={{ powerPreference: 'high-performance' }}
+      camera={{ fov: 45, near: 0.5, far: 2.25, position: [0, 0, 0.8] }}
       {...rest}
     >
-      <canvas aria-hidden className="portrait__canvas" ref={canvas} />
-    </div>
+      <ambientLight intensity={themeId === 'dark' ? 0.1 : 0.2} />
+      <RectLight args={[0xffffff, 6, 10, 10]} position={[4.5, -1.3, -3]} />
+      <RectLight args={[0xffffff, 6, 15, 15]} position={[-10, 0.7, -10]} />
+      {(isInViewport || loaded) && (
+        <Suspense fallback={<Loader />}>
+          <Model isInViewport={isInViewport} reduceMotion={reduceMotion} />
+        </Suspense>
+      )}
+    </Canvas>
   );
 };
 

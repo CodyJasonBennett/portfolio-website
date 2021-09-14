@@ -1,4 +1,4 @@
-export const vertex = `
+export const vertexShader = `
   varying vec2 vUv;
   void main() {
     vUv = uv;
@@ -6,7 +6,7 @@ export const vertex = `
   }
 `;
 
-export const fragment = `
+export const fragmentShader = `
   varying vec2 vUv;
   uniform sampler2D currentImage;
   uniform sampler2D nextImage;

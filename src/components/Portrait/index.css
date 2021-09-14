@@ -1,8 +1,8 @@
 .portrait {
   position: relative;
-}
 
-.portrait__canvas {
-  position: absolute;
-  inset: 0;
+  & canvas {
+    position: absolute;
+    inset: 0;
+  }
 }

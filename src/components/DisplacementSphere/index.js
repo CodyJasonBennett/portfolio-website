@@ -1,132 +1,41 @@
-import { useEffect, useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import classNames from 'classnames';
-import {
-  Vector2,
-  sRGBEncoding,
-  WebGLRenderer,
-  PerspectiveCamera,
-  Scene,
-  DirectionalLight,
-  AmbientLight,
-  UniformsUtils,
-  UniformsLib,
-  MeshPhongMaterial,
-  SphereGeometry,
-  Mesh,
-  Color,
-} from 'three';
-import { spring, value } from 'popmotion';
-import vertShader from './sphereVertShader';
-import fragShader from './sphereFragShader';
 import { Transition } from 'react-transition-group';
+import { UniformsUtils, UniformsLib } from 'three';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { spring, value } from 'popmotion';
 import { useTheme } from 'components/ThemeProvider';
-import { usePrefersReducedMotion, useInViewport, useWindowSize } from 'hooks';
+import { usePrefersReducedMotion, useInViewport } from 'hooks';
 import { reflow } from 'utils/transition';
-import { media, rgbToThreeColor } from 'utils/style';
-import { cleanScene, removeLights, cleanRenderer } from 'utils/three';
+import { media } from 'utils/style';
+import { vertexShader, fragmentShader } from './sphereShader';
 import './index.css';
 
-const DisplacementSphere = props => {
-  const theme = useTheme();
-  const { rgbBackground, themeId, colorWhite } = theme;
-  const canvas = useRef();
-  const mouse = useRef();
-  const renderer = useRef();
-  const camera = useRef();
-  const scene = useRef();
-  const lights = useRef();
-  const uniforms = useRef();
-  const material = useRef();
-  const geometry = useRef();
+const Sphere = ({ isInViewport, reduceMotion }) => {
+  const { size, invalidate } = useThree();
   const sphere = useRef();
   const tweenRef = useRef();
   const sphereSpring = useRef();
-  const prefersReducedMotion = usePrefersReducedMotion();
-  const isInViewport = useInViewport(canvas);
-  const windowSize = useWindowSize();
+  const uniforms = useRef();
 
   useEffect(() => {
-    const { innerWidth, innerHeight } = window;
-    mouse.current = new Vector2(0.8, 0.5);
-    renderer.current = new WebGLRenderer({
-      canvas: canvas.current,
-      powerPreference: 'high-performance',
-    });
-    renderer.current.setSize(innerWidth, innerHeight);
-    renderer.current.setPixelRatio(Math.min(2, window.devicePixelRatio));
-    renderer.current.outputEncoding = sRGBEncoding;
-
-    camera.current = new PerspectiveCamera(54, innerWidth / innerHeight, 0.1, 100);
-    camera.current.position.z = 52;
-
-    scene.current = new Scene();
-
-    material.current = new MeshPhongMaterial();
-    material.current.onBeforeCompile = shader => {
-      uniforms.current = UniformsUtils.merge([
-        UniformsLib['ambient'],
-        UniformsLib['lights'],
-        shader.uniforms,
-        { time: { type: 'f', value: 0 } },
-      ]);
-
-      shader.uniforms = uniforms.current;
-      shader.vertexShader = vertShader;
-      shader.fragmentShader = fragShader;
-    };
-
-    geometry.current = new SphereGeometry(32, 128, 128);
-
-    sphere.current = new Mesh(geometry.current, material.current);
-    scene.current.add(sphere.current);
-
-    return () => {
-      cleanScene(scene.current);
-      cleanRenderer(renderer.current);
-    };
-  }, []);
-
-  useEffect(() => {
-    const dirLight = new DirectionalLight(colorWhite, 0.6);
-    const ambientLight = new AmbientLight(colorWhite, themeId === 'light' ? 0.8 : 0.1);
-
-    dirLight.position.set(100, 100, 200);
-
-    lights.current = [dirLight, ambientLight];
-    scene.current.background = new Color(...rgbToThreeColor(rgbBackground));
-    lights.current.forEach(light => scene.current.add(light));
-
-    return () => {
-      removeLights(lights.current);
-    };
-  }, [rgbBackground, colorWhite, themeId]);
-
-  useEffect(() => {
-    const { width, height } = windowSize;
-
-    const adjustedHeight = height * 1.3;
-    renderer.current.setSize(width, adjustedHeight);
-    camera.current.aspect = width / adjustedHeight;
-    camera.current.updateProjectionMatrix();
-
-    // Render a single frame on resize when not animating
-    if (prefersReducedMotion) {
-      renderer.current.render(scene.current, camera.current);
-    }
-
-    if (width <= media.mobile) {
+    if (size.width <= media.mobile) {
       sphere.current.position.x = 14;
       sphere.current.position.y = 10;
-    } else if (width <= media.tablet) {
+    } else if (size.width <= media.tablet) {
       sphere.current.position.x = 18;
       sphere.current.position.y = 14;
     } else {
       sphere.current.position.x = 22;
       sphere.current.position.y = 16;
     }
-  }, [prefersReducedMotion, windowSize]);
+
+    if (reduceMotion) invalidate();
+  }, [size.width, reduceMotion, invalidate]);
 
   useEffect(() => {
+    if (!isInViewport || reduceMotion) return;
+
     const onMouseMove = event => {
       const { rotation } = sphere.current;
 
@@ -152,45 +61,73 @@ const DisplacementSphere = props => {
       }).start(sphereSpring.current);
     };
 
-    if (!prefersReducedMotion && isInViewport) {
-      window.addEventListener('mousemove', onMouseMove);
-    }
+    window.addEventListener('mousemove', onMouseMove);
 
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
       tweenRef.current?.stop();
     };
-  }, [isInViewport, prefersReducedMotion]);
+  }, [isInViewport, reduceMotion]);
 
-  useEffect(() => {
-    if (!prefersReducedMotion && isInViewport) {
-      renderer.current.setAnimationLoop(time => {
-        if (uniforms.current !== undefined) {
-          uniforms.current.time.value = time / 20000;
-        }
+  useFrame(state => {
+    if (reduceMotion) return;
 
-        sphere.current.rotation.z = time / 25000;
+    const time = state.clock.getElapsedTime();
 
-        renderer.current.render(scene.current, camera.current);
-      });
-    } else {
-      renderer.current.render(scene.current, camera.current);
+    if (uniforms.current !== undefined) {
+      uniforms.current.time.value = time / 20;
     }
 
-    return () => {
-      renderer.current.setAnimationLoop(null);
-    };
-  }, [isInViewport, prefersReducedMotion]);
+    sphere.current.rotation.z = time / 25;
+  });
+
+  return (
+    <mesh ref={sphere}>
+      <sphereGeometry args={[32, 128, 128]} />
+      <meshPhongMaterial
+        onBeforeCompile={shader => {
+          uniforms.current = UniformsUtils.merge([
+            UniformsLib['ambient'],
+            UniformsLib['lights'],
+            shader.uniforms,
+            { time: { type: 'f', value: 0 } },
+          ]);
+
+          shader.uniforms = uniforms.current;
+          shader.vertexShader = vertexShader;
+          shader.fragmentShader = fragmentShader;
+
+          if (reduceMotion) invalidate();
+        }}
+      />
+    </mesh>
+  );
+};
+
+const DisplacementSphere = props => {
+  const { themeId } = useTheme();
+  const container = useRef();
+  const isInViewport = useInViewport(container);
+  const reduceMotion = usePrefersReducedMotion();
 
   return (
     <Transition appear in onEnter={reflow} timeout={3000}>
       {status => (
-        <canvas
+        <Canvas
           aria-hidden
+          ref={container}
+          frameloop={reduceMotion ? 'demand' : 'always'}
           className={classNames('displacement-sphere', `displacement-sphere--${status}`)}
-          ref={canvas}
+          dpr={[1, 2]}
+          gl={{ powerPreference: 'high-performance' }}
+          camera={{ fov: 54, near: 0.1, far: 100, position: [0, 0, 52] }}
+          style={{ position: 'absolute', width: '100vw', height: '130vh' }}
           {...props}
-        />
+        >
+          <directionalLight intensity={0.6} position={[100, 100, 200]} />
+          <ambientLight intensity={themeId === 'light' ? 0.8 : 0.1} />
+          <Sphere isInViewport={isInViewport} reduceMotion={reduceMotion} />
+        </Canvas>
       )}
     </Transition>
   );

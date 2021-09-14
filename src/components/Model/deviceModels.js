@@ -1,10 +1,6 @@
+import { ModelAnimationType } from './animation';
 import iphone11 from 'assets/iphone-11.glb';
 import macbookPro from 'assets/macbook-pro.glb';
-
-export const ModelAnimationType = {
-  SpringUp: 'spring-up',
-  LaptopOpen: 'laptop-open',
-};
 
 const models = {
   phone: {
