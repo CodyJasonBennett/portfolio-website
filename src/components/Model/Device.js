@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useMemo, useCallback, useEffect } from 'react';
 import { sRGBEncoding, LinearFilter, Color, TextureLoader } from 'three';
 import { useThree } from '@react-three/fiber';
 import { useTexture, useGLTF } from '@react-three/drei';
@@ -9,6 +9,7 @@ const Device = ({ model, reduceMotion, index, showDelay }) => {
   const { gl, invalidate } = useThree();
   const placeholder = useTexture(model.texture.placeholder);
   const gltf = useGLTF(model.url);
+  const object = useMemo(() => gltf.scene.clone(), [gltf.scene]);
 
   const applyScreenTexture = useCallback(
     (texture, node) => {
@@ -35,7 +36,7 @@ const Device = ({ model, reduceMotion, index, showDelay }) => {
   useEffect(() => {
     let spring;
 
-    gltf.scene.traverse(async node => {
+    object.traverse(async node => {
       if (node.material) {
         node.material.color = new Color(0x1f2025);
         node.material.color.convertSRGBToLinear();
@@ -53,7 +54,7 @@ const Device = ({ model, reduceMotion, index, showDelay }) => {
     if (!reduceMotion) {
       const { animation, modelValue } = getModelAnimation({
         model,
-        gltf,
+        object,
         reduceMotion,
         index,
         showDelay,
@@ -68,7 +69,7 @@ const Device = ({ model, reduceMotion, index, showDelay }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <primitive object={gltf.scene} />;
+  return <primitive object={object} />;
 };
 
 export default Device;

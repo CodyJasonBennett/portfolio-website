@@ -16,7 +16,7 @@ export const MeshType = {
 /**
  * Get custom model animation
  */
-export const getModelAnimation = ({ model, gltf, reduceMotion, index, showDelay }) => {
+export const getModelAnimation = ({ model, object, reduceMotion, index, showDelay }) => {
   const positionVector = new Vector3(
     model.position.x,
     model.position.y,
@@ -24,7 +24,7 @@ export const getModelAnimation = ({ model, gltf, reduceMotion, index, showDelay 
   );
 
   if (reduceMotion) {
-    gltf.scene.position.set(...positionVector.toArray());
+    object.position.set(...positionVector.toArray());
     return;
   }
 
@@ -37,10 +37,10 @@ export const getModelAnimation = ({ model, gltf, reduceMotion, index, showDelay 
     );
     const endPosition = positionVector;
 
-    gltf.scene.position.set(...startPosition.toArray());
+    object.position.set(...startPosition.toArray());
 
-    const modelValue = value(gltf.scene.position, ({ x, y, z }) => {
-      gltf.scene.position.set(x, y, z);
+    const modelValue = value(object.position, ({ x, y, z }) => {
+      object.position.set(x, y, z);
       invalidate();
     });
 
@@ -60,11 +60,11 @@ export const getModelAnimation = ({ model, gltf, reduceMotion, index, showDelay 
 
   // Laptop open animation
   if (model.animation === ModelAnimationType.LaptopOpen) {
-    const frameNode = gltf.scene.children.find(node => node.name === MeshType.Frame);
+    const frameNode = object.children.find(node => node.name === MeshType.Frame);
     const startRotation = new Vector3(MathUtils.degToRad(90), 0, 0);
     const endRotation = new Vector3(0, 0, 0);
 
-    gltf.scene.position.set(...positionVector.toArray());
+    object.position.set(...positionVector.toArray());
     frameNode.rotation.set(...startRotation.toArray());
 
     const modelValue = value(frameNode.rotation, ({ x, y, z }) => {
