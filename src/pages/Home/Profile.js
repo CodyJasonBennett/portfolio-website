@@ -92,6 +92,7 @@ const Profile = ({ id, visible, sectionRef }) => {
                 {!prerender && (
                   <Suspense fallback={null}>
                     <Portrait
+                      noStyle
                       className={classNames(
                         'profile__image',
                         `profile__image--${status}`
