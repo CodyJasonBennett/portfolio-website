@@ -77,7 +77,7 @@ const Model = ({
       aria-label={alt}
       flat
       frameloop="demand"
-      dpr={2}
+      dpr={[1, 2]}
       gl={{ powerPreference: 'high-performance' }}
       camera={{
         fov: 36,
