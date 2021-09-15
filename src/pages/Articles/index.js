@@ -104,19 +104,7 @@ const ArticlesContext = createContext({});
 const ArticlesRouter = () => {
   const [posts, setPosts] = useState([]);
 
-  useEffect(() => {
-    const grabPosts = async () => {
-      const postData = await Promise.all(fetchPosts);
-
-      const posts = postData
-        .filter(({ draft }) => !draft)
-        .sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
-
-      setPosts(posts);
-    };
-
-    grabPosts();
-  }, []);
+  useEffect(() => void fetchPosts().then(setPosts), []);
 
   return (
     <ArticlesContext.Provider value={{ posts }}>
