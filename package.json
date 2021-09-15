@@ -74,7 +74,7 @@
   },
   "scripts": {
     "start": "webpack serve --hot --open --port 80 --mode development",
-    "build": "rimraf dist && webpack --mode production",
+    "build": "rimraf build && webpack --mode production",
     "build-storybook": "build-storybook -o build-storybook",
     "postbuild": "react-snap",
     "test": "jest",
@@ -131,6 +131,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-  "proxy": "https://codyb.co"
+  }
 }
