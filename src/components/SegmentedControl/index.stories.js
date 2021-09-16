@@ -3,7 +3,7 @@ import { StoryContainer } from '../../../.storybook/StoryContainer';
 import SegmentedControl, { SegmentedControlOption } from 'components/SegmentedControl';
 
 export default {
-  title: 'SegmentedControl',
+  title: 'Segmented Control',
   args: {
     options: ['Option 1', 'Option 2', 'Option 3'],
   },

@@ -3,7 +3,7 @@ import { StoryContainer } from '../../../.storybook/StoryContainer';
 import Heading from 'components/Heading';
 
 export default {
-  title: 'DecoderText',
+  title: 'Decoder Text',
   args: {
     text: 'Decoder text',
   },
