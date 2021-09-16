@@ -14,14 +14,11 @@ module.exports = (_, { mode }) => {
   process.env.NODE_ENV = mode;
   process.env.BABEL_ENV = mode;
 
-  const isEnvDevelopment = mode === 'development';
-  const isEnvProduction = mode === 'production';
-
   return {
     target: ['browserslist'],
     mode,
-    bail: isEnvProduction,
-    devtool: isEnvProduction ? false : 'cheap-module-source-map',
+    bail: mode === 'production',
+    devtool: mode === 'development' && 'cheap-module-source-map',
     entry: path.resolve(process.cwd(), 'src/index.js'),
     devServer: {
       static: {
@@ -37,27 +34,30 @@ module.exports = (_, { mode }) => {
       // The build folder.
       path: path.resolve(process.cwd(), 'build'),
       // Add /* filename */ comments to generated require()s in the output.
-      pathinfo: isEnvDevelopment,
+      pathinfo: mode === 'development',
       // There will be one main bundle, and one file per asynchronous chunk.
       // In development, it does not produce real files.
-      filename: isEnvProduction
-        ? 'static/js/[name].[contenthash:8].js'
-        : 'static/js/bundle.js',
+      filename:
+        mode === 'production'
+          ? 'static/js/[name].[contenthash:8].js'
+          : 'static/js/bundle.js',
       // There are also additional JS chunk files for code splitting.
-      chunkFilename: isEnvProduction
-        ? 'static/js/[name].[contenthash:8].chunk.js'
-        : 'static/js/[name].chunk.js',
+      chunkFilename:
+        mode === 'production'
+          ? 'static/js/[name].[contenthash:8].chunk.js'
+          : 'static/js/[name].chunk.js',
       assetModuleFilename: 'static/media/[name].[hash][ext]',
       // Where the app is served from
       publicPath: '/',
       // Point sourcemap entries to original disk location (format as URL on Windows)
-      devtoolModuleFilenameTemplate: isEnvProduction
-        ? info =>
-            path
-              .relative(path.resolve(process.cwd(), 'src'), info.absoluteResourcePath)
-              .replace(/\\/g, '/')
-        : isEnvDevelopment &&
-          (info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
+      devtoolModuleFilenameTemplate:
+        mode === 'production'
+          ? info =>
+              path
+                .relative(path.resolve(process.cwd(), 'src'), info.absoluteResourcePath)
+                .replace(/\\/g, '/')
+          : mode === 'development' &&
+            (info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
     },
     cache: {
       type: 'filesystem',
@@ -76,7 +76,7 @@ module.exports = (_, { mode }) => {
       level: 'none',
     },
     optimization: {
-      minimize: isEnvProduction,
+      minimize: mode === 'production',
       minimizer: [
         new TerserPlugin({
           terserOptions: {
@@ -166,13 +166,13 @@ module.exports = (_, { mode }) => {
                   ],
                 ],
                 plugins: [
-                  isEnvDevelopment &&
+                  mode === 'development' &&
                     process.env.STORYBOOK !== 'true' &&
                     require.resolve('react-refresh/babel'),
                 ].filter(Boolean),
                 cacheDirectory: true,
                 cacheCompression: false,
-                compact: isEnvProduction,
+                compact: mode === 'production',
               },
             },
             // Process any JS outside of the app with Babel.
@@ -198,15 +198,15 @@ module.exports = (_, { mode }) => {
             {
               test: /\.css$/,
               use: [
-                isEnvDevelopment && require.resolve('style-loader'),
-                isEnvProduction && {
+                mode === 'development' && require.resolve('style-loader'),
+                mode === 'production' && {
                   loader: MiniCssExtractPlugin.loader,
                 },
                 {
                   loader: require.resolve('css-loader'),
                   options: {
                     importLoaders: 1,
-                    sourceMap: !isEnvProduction,
+                    sourceMap: !mode === 'production',
                   },
                 },
                 {
@@ -234,7 +234,7 @@ module.exports = (_, { mode }) => {
                         'postcss-normalize',
                       ],
                     },
-                    sourceMap: !isEnvProduction,
+                    sourceMap: !mode === 'production',
                   },
                 },
               ].filter(Boolean),
@@ -257,20 +257,21 @@ module.exports = (_, { mode }) => {
       new HtmlWebpackPlugin({
         inject: true,
         template: path.resolve(process.cwd(), 'public/index.html'),
-        minify: isEnvProduction
-          ? {
-              removeComments: true,
-              collapseWhitespace: true,
-              removeRedundantAttributes: true,
-              useShortDoctype: true,
-              removeEmptyAttributes: true,
-              removeStyleLinkTypeAttributes: true,
-              keepClosingSlash: true,
-              minifyJS: true,
-              minifyCSS: true,
-              minifyURLs: true,
-            }
-          : undefined,
+        minify:
+          mode === 'production'
+            ? {
+                removeComments: true,
+                collapseWhitespace: true,
+                removeRedundantAttributes: true,
+                useShortDoctype: true,
+                removeEmptyAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                keepClosingSlash: true,
+                minifyJS: true,
+                minifyCSS: true,
+                minifyURLs: true,
+              }
+            : undefined,
       }),
       // Makes some environment variables available to the JS code.
       new webpack.DefinePlugin({
@@ -279,12 +280,12 @@ module.exports = (_, { mode }) => {
         },
       }),
       // Experimental hot reloading for React.
-      isEnvDevelopment &&
+      mode === 'development' &&
         new ReactRefreshWebpackPlugin({
           overlay: false,
         }),
-      isEnvDevelopment && new CaseSensitivePathsPlugin(),
-      isEnvProduction &&
+      mode === 'development' && new CaseSensitivePathsPlugin(),
+      mode === 'production' &&
         new MiniCssExtractPlugin({
           filename: 'static/css/[name].[contenthash:8].css',
           chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
