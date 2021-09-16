@@ -4,7 +4,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
 const CSSMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
@@ -200,7 +200,7 @@ module.exports = (_, { mode }) => {
               use: [
                 mode === 'development' && require.resolve('style-loader'),
                 mode === 'production' && {
-                  loader: MiniCssExtractPlugin.loader,
+                  loader: MiniCSSExtractPlugin.loader,
                 },
                 {
                   loader: require.resolve('css-loader'),
@@ -286,7 +286,7 @@ module.exports = (_, { mode }) => {
         }),
       mode === 'development' && new CaseSensitivePathsPlugin(),
       mode === 'production' &&
-        new MiniCssExtractPlugin({
+        new MiniCSSExtractPlugin({
           filename: 'static/css/[name].[contenthash:8].css',
           chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
         }),

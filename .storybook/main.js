@@ -1,3 +1,4 @@
+const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
 const createConfig = require('../webpack.config.js');
 
 module.exports = {
@@ -27,6 +28,14 @@ module.exports = {
         ...config.resolve,
         modules: [...config.resolve.modules, ...webpackConfig.resolve.modules],
       },
+      plugins: [
+        ...config.plugins,
+        mode === 'production' &&
+          new MiniCSSExtractPlugin({
+            filename: 'static/css/[name].[contenthash:8].css',
+            chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+          }),
+      ].filter(Boolean),
     };
   },
 };
