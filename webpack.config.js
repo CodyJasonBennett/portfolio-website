@@ -22,6 +22,9 @@ module.exports = (_, { mode }) => {
     devtool: mode === 'development' && 'cheap-module-source-map',
     entry: path.resolve(process.cwd(), 'src/index.js'),
     devServer: {
+      client: {
+        overlay: false,
+      },
       static: {
         directory: path.join(process.cwd(), 'public'),
       },
