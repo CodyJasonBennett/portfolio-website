@@ -9,7 +9,7 @@
   "private": true,
   "devDependencies": {
     "@babel/core": "^7.15.5",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.0",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.1",
     "@storybook/addon-a11y": "^6.3.8",
     "@storybook/addon-actions": "^6.3.8",
     "@storybook/addon-controls": "^6.3.8",
@@ -46,7 +46,7 @@
     "postcss-loader": "^6.1.1",
     "postcss-normalize": "^10.0.1",
     "postcss-preset-env": "^6.7.0",
-    "prettier": "^2.4.0",
+    "prettier": "^2.4.1",
     "react-dev-utils": "^11.0.4",
     "react-refresh": "^0.10.0",
     "react-snap": "1.23.0",
@@ -63,7 +63,7 @@
   "dependencies": {
     "@mdx-js/react": "^1.6.22",
     "@react-three/drei": "^7.8.0",
-    "@react-three/fiber": "^7.0.6",
+    "@react-three/fiber": "^7.0.7",
     "classnames": "^2.3.1",
     "popmotion": "^8.7.6",
     "react": "^17.0.2",

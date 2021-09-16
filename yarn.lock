@@ -1776,10 +1776,10 @@
     schema-utils "^2.6.5"
     source-map "^0.7.3"
 
-"@pmmmwh/react-refresh-webpack-plugin@^0.5.0":
-  version "0.5.0"
-  resolved "https://registry.yarnpkg.com/@pmmmwh/react-refresh-webpack-plugin/-/react-refresh-webpack-plugin-0.5.0.tgz#ca24a418c3b69cb87fd0dd95cca2c4bfa5683904"
-  integrity sha512-VRmiCnVHudkmzGh4gD1eW42matvNL8Y0OZ8FCEWs79iPTldihsuEi5GTMFjU+UfKRQxinN2e0/MDhJzExuiIyA==
+"@pmmmwh/react-refresh-webpack-plugin@^0.5.1":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@pmmmwh/react-refresh-webpack-plugin/-/react-refresh-webpack-plugin-0.5.1.tgz#7e98d6f22c360e1dd00909f5fa9d0f6ecc263292"
+  integrity sha512-ccap6o7+y5L8cnvkZ9h8UXCGyy2DqtwCD+/N3Yru6lxMvcdkPKtdx13qd7sAC9s5qZktOmWf9lfUjsGOvSdYhg==
   dependencies:
     ansi-html-community "^0.0.8"
     common-path-prefix "^3.0.0"
@@ -1842,10 +1842,10 @@
     utility-types "^3.10.0"
     zustand "^3.5.1"
 
-"@react-three/fiber@^7.0.6":
-  version "7.0.6"
-  resolved "https://registry.yarnpkg.com/@react-three/fiber/-/fiber-7.0.6.tgz#faa5aa5d496ae778a89fe2d3f503428a0e3c841b"
-  integrity sha512-GSMmnk66B/xGGfbSj5lGiZCxGQD0i8rm0Bt/Xp6TD2b9cYe2Lxb2wegU04zIeN89aoUYMHXhL1GNXsZvvOjfUA==
+"@react-three/fiber@^7.0.7":
+  version "7.0.7"
+  resolved "https://registry.yarnpkg.com/@react-three/fiber/-/fiber-7.0.7.tgz#32a3fc43871890d03ce55fd08db064e4c7af308a"
+  integrity sha512-cDRweUmJUbyGSn1j0r3bzKdS+MobIA93LR0j3pa2XOpjutKJsS2va38xEbbGK7ODTKVvCOdjJ9xlBB4TSS1Vhg==
   dependencies:
     "@babel/runtime" "^7.13.10"
     react-merge-refs "^1.1.0"
@@ -11819,10 +11819,10 @@ prelude-ls@~1.1.2:
   resolved "https://registry.yarnpkg.com/prelude-ls/-/prelude-ls-1.1.2.tgz#21932a549f5e52ffd9a827f570e04be62a97da54"
   integrity sha1-IZMqVJ9eUv/ZqCf1cOBL5iqX2lQ=
 
-prettier@^2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.4.0.tgz#85bdfe0f70c3e777cf13a4ffff39713ca6f64cba"
-  integrity sha512-DsEPLY1dE5HF3BxCRBmD4uYZ+5DCbvatnolqTqcxEgKVZnL2kUfyu7b8pPQ5+hTBkdhU9SLUmK0/pHb07RE4WQ==
+prettier@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/prettier/-/prettier-2.4.1.tgz#671e11c89c14a4cfc876ce564106c4a6726c9f5c"
+  integrity sha512-9fbDAXSBcc6Bs1mZrDYb3XKzDLm4EXXL9sC1LqKP5rZkT6KRr/rf9amVUcODVXgguK/isJz0d0hP72WeaKWsvA==
 
 prettier@~2.2.1:
   version "2.2.1"
