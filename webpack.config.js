@@ -8,6 +8,7 @@ const MiniCSSExtractPlugin = require('mini-css-extract-plugin');
 const CSSMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const { createHash } = require('crypto');
 
 module.exports = (_, { mode }) => {
@@ -289,6 +290,10 @@ module.exports = (_, { mode }) => {
         new MiniCSSExtractPlugin({
           filename: 'static/css/[name].[contenthash:8].css',
           chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+        }),
+      mode === 'production' &&
+        new CopyPlugin({
+          patterns: [{ from: 'public', filter: path => !path.endsWith('index.html') }],
         }),
       new ESLintPlugin({
         extensions: ['js'],
