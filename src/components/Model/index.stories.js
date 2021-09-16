@@ -19,6 +19,7 @@ export const phone = () => (
   <StoryContainer padding={0}>
     <Suspense fallback={null}>
       <Model
+        show
         style={modelStyle}
         cameraPosition={{ x: 0, y: 0, z: 11.5 }}
         alt="Phone models"
@@ -51,6 +52,7 @@ export const laptop = () => (
   <StoryContainer padding={0}>
     <Suspense fallback={null}>
       <Model
+        show
         style={modelStyle}
         cameraPosition={{ x: 0, y: 0, z: 8 }}
         alt="Laptop Model"
