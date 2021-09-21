@@ -65,7 +65,7 @@ const DecoderText = ({
     },
     delay: startDelay,
     immediate: reduceMotion,
-    pause: prerender && !start,
+    pause: prerender || !start,
     config: {
       mass: 10,
       friction: 120,
