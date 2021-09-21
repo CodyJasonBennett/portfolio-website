@@ -1,6 +1,7 @@
-import { useRef, useEffect, Suspense } from 'react';
+import { useRef, useState, useEffect, Suspense } from 'react';
 import classNames from 'classnames';
-import { spring, value } from 'popmotion';
+import { Vector2 } from 'three';
+import { useSpring } from '@react-spring/core';
 import { invalidate, Canvas } from '@react-three/fiber';
 import Shadows from './Shadows';
 import Device from './Device';
@@ -23,50 +24,56 @@ const Model = ({
   const isInViewport = useInViewport(canvas, false, { threshold: 0.4 });
   const reduceMotion = usePrefersReducedMotion();
   const visible = show || isInViewport;
+  const pause = !isInViewport || reduceMotion;
+  const [rotation, setRotation] = useState();
 
-  // Handle mouse move animation
+  useSpring({
+    from: {
+      x: 0,
+      y: 0,
+    },
+    to: rotation,
+    config: {
+      mass: 8,
+      friction: 80,
+    },
+    pause,
+    onChange({ value }) {
+      if (!modelGroup.current) return;
+
+      const { x, y } = value;
+      modelGroup.current.rotation.x = x;
+      modelGroup.current.rotation.y = y;
+
+      invalidate();
+    },
+  });
+
   useEffect(() => {
-    let rotationSpring;
-    let rotationSpringValue;
+    if (pause) return;
 
-    const onMouseMove = event => {
-      if (!modelGroup?.current) return;
+    const tempVector = new Vector2();
 
-      const { rotation } = modelGroup.current;
+    const onMouseMove = ({ clientX, clientY }) => {
       const { innerWidth, innerHeight } = window;
 
       const position = {
-        x: (event.clientX - innerWidth / 2) / innerWidth,
-        y: (event.clientY - innerHeight / 2) / innerHeight,
+        x: (clientX - innerWidth / 2) / innerWidth,
+        y: (clientY - innerHeight / 2) / innerHeight,
       };
 
-      if (!rotationSpringValue) {
-        rotationSpringValue = value({ x: rotation.x, y: rotation.y }, ({ x, y }) => {
-          rotation.set(x, y, rotation.z);
-          invalidate();
-        });
-      }
+      tempVector.set(position.y / 2, position.x / 2);
 
-      rotationSpring = spring({
-        from: rotationSpringValue.get(),
-        to: { x: position.y / 2, y: position.x / 2 },
-        stiffness: 40,
-        damping: 40,
-        velocity: rotationSpringValue.getVelocity(),
-        restSpeed: 0.00001,
-        mass: 1.4,
-      }).start(rotationSpringValue);
+      const { x, y } = tempVector;
+      setRotation({ x, y });
     };
 
-    if (isInViewport && !reduceMotion) {
-      window.addEventListener('mousemove', onMouseMove);
-    }
+    window.addEventListener('mousemove', onMouseMove);
 
     return () => {
       window.removeEventListener('mousemove', onMouseMove);
-      rotationSpring?.stop();
     };
-  }, [isInViewport, reduceMotion]);
+  }, [pause]);
 
   return (
     <Canvas
@@ -102,6 +109,7 @@ const Model = ({
                 index={index}
                 showDelay={showDelay}
                 reduceMotion={reduceMotion}
+                pause={pause}
               />
             ))}
           </group>

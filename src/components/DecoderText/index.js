@@ -1,8 +1,8 @@
-import { useRef, useEffect, memo } from 'react';
+import { useRef, memo } from 'react';
 import classNames from 'classnames';
-import { usePrefersReducedMotion } from 'hooks';
-import { spring, chain, delay, value } from 'popmotion';
+import { useSpring } from '@react-spring/core';
 import VisuallyHidden from 'components/VisuallyHidden';
+import { usePrefersReducedMotion } from 'hooks';
 import prerender from 'utils/prerender';
 import './index.css';
 
@@ -31,7 +31,7 @@ const CharType = {
 };
 
 function shuffle(content, output, position) {
-  return content.map((value, index) => {
+  return content.split('').map((value, index) => {
     if (index < position) {
       return { type: CharType.Value, value };
     }
@@ -56,50 +56,31 @@ const DecoderText = ({
   const container = useRef();
   const reduceMotion = usePrefersReducedMotion();
 
-  useEffect(() => {
-    const containerInstance = container.current;
-    const content = text.split('');
-    let animation;
+  useSpring({
+    from: {
+      t: 0,
+    },
+    to: {
+      t: text.length,
+    },
+    delay: startDelay,
+    immediate: reduceMotion,
+    pause: prerender && !start,
+    config: {
+      mass: 10,
+      friction: 120,
+    },
+    onChange({ value }) {
+      const { t } = value;
 
-    const renderOutput = () => {
+      output.current = shuffle(text, output.current, t);
       const characterMap = output.current.map(item => {
         return `<span class="decoder-text__${item.type}">${item.value}</span>`;
       });
 
-      containerInstance.innerHTML = characterMap.join('');
-    };
-
-    const springValue = value(0, position => {
-      output.current = shuffle(content, output.current, position);
-      renderOutput();
-    });
-
-    if (start && !animation && !reduceMotion && !prerender) {
-      animation = chain(
-        delay(startDelay),
-        spring({
-          from: 0,
-          to: content.length,
-          stiffness: 8,
-          damping: 5,
-        })
-      ).start(springValue);
-    }
-
-    if (reduceMotion) {
-      output.current = content.map((value, index) => ({
-        type: CharType.Value,
-        value: content[index],
-      }));
-      renderOutput();
-    }
-
-    return () => {
-      if (animation) {
-        animation.stop();
-      }
-    };
-  }, [reduceMotion, start, startDelay, text]);
+      container.current.innerHTML = characterMap.join('');
+    },
+  });
 
   return (
     <span className={classNames('decoder-text', className)} {...rest}>

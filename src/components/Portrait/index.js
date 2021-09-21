@@ -1,58 +1,64 @@
-import { useRef, useEffect, Suspense } from 'react';
+import { useState, useRef, useEffect, Suspense } from 'react';
 import classNames from 'classnames';
+import { Vector2 } from 'three';
 import { useThree, Canvas } from '@react-three/fiber';
 import { useGLTF, Environment } from '@react-three/drei';
-import { spring, value } from 'popmotion';
+import { useSpring } from '@react-spring/core';
 import { useInViewport, usePrefersReducedMotion } from 'hooks';
 import portraitModelPath from 'assets/portrait.glb';
 import './index.css';
 
-const Model = ({ isInViewport, reduceMotion }) => {
+const PortraitModel = ({ isInViewport, reduceMotion }) => {
   const { scene, invalidate } = useThree();
+  const [rotation, setRotation] = useState();
+  const pause = !isInViewport || reduceMotion;
   const gltf = useGLTF(portraitModelPath);
 
-  // Handle mouse move animation
-  useEffect(() => {
-    let rotationSpring;
-    let rotationSpringValue;
+  useSpring({
+    from: {
+      x: 0,
+      y: 0,
+    },
+    to: rotation,
+    config: {
+      mass: 8,
+      friction: 80,
+    },
+    pause,
+    onChange({ value }) {
+      const { x, y } = value;
+      scene.rotation.x = x;
+      scene.rotation.y = y;
 
-    const onMouseMove = event => {
-      const { rotation } = scene;
+      invalidate();
+    },
+  });
+
+  useEffect(() => {
+    if (pause) return;
+
+    const tempVector = new Vector2();
+
+    const onMouseMove = ({ clientX, clientY }) => {
       const { innerWidth, innerHeight } = window;
 
       const position = {
-        x: (event.clientX - innerWidth / 2) / innerWidth,
-        y: (event.clientY - innerHeight / 2) / innerHeight,
+        x: (clientX - innerWidth / 2) / innerWidth,
+        y: (clientY - innerHeight / 2) / innerHeight,
       };
 
-      if (!rotationSpringValue) {
-        rotationSpringValue = value({ x: rotation.x, y: rotation.y }, ({ x, y }) => {
-          rotation.set(x, y, rotation.z);
-          invalidate();
-        });
-      }
+      tempVector.set(position.y / 2, position.x / 2);
 
-      rotationSpring = spring({
-        from: rotationSpringValue.get(),
-        to: { x: position.y / 2, y: position.x / 2 },
-        stiffness: 40,
-        damping: 40,
-        velocity: rotationSpringValue.getVelocity(),
-        restSpeed: 0.00001,
-        mass: 1.4,
-      }).start(rotationSpringValue);
+      const { x, y } = tempVector;
+      setRotation({ x, y });
     };
 
-    if (isInViewport && !reduceMotion) {
-      window.addEventListener('mousemove', onMouseMove);
-    }
+    window.addEventListener('mousemove', onMouseMove);
 
-    return function cleanup() {
+    return () => {
       window.removeEventListener('mousemove', onMouseMove);
-
-      rotationSpring?.stop();
     };
-  }, [scene, invalidate, isInViewport, reduceMotion]);
+  }, [pause]);
 
   return <primitive object={gltf.scene} position={[0, -1.6, 0]} />;
 };
@@ -88,7 +94,7 @@ const Portrait = ({ className, show = true, noStyle, delay, ...rest }) => {
       <spotLight intensity={0.8} angle={0.1} penumbra={1} position={[5, 2, -10]} />
       {visible && (
         <Suspense fallback={null}>
-          <Model isInViewport={isInViewport} reduceMotion={reduceMotion} />
+          <PortraitModel isInViewport={isInViewport} reduceMotion={reduceMotion} />
           <Environment preset="studio" />
         </Suspense>
       )}

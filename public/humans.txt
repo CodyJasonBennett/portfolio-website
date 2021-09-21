@@ -11,6 +11,8 @@ Multidisciplinary Designer & Developer
 Design tools:
 Figma
 InVision
+After Effects
+Photoshop
 
 github.com/CodyJasonBennett
 
@@ -21,7 +23,9 @@ TECHNOLOGY
 React
 Storybook
 Three
-Popmotion
+React Three Fiber
+Drei
+React Spring
 
 _______________________________________________________________________________
 
